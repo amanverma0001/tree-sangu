@@ -1,0 +1,716 @@
+/* ==========================================================================
+   Romantic Fractal Tree Animation - Design Tokens & Core Styles
+   ========================================================================== */
+
+:root {
+  --bg-primary: #050409;
+  --bg-secondary: #0d0714;
+  --accent-gold: #ffb703;
+  --accent-orange: #fb8500;
+  --accent-warm: #ff9e2c;
+  --accent-red: #e63946;
+  --accent-crimson: #9e1b32;
+  --text-primary: #ffffff;
+  --text-muted: rgba(255, 255, 255, 0.7);
+  --glass-bg: rgba(20, 15, 30, 0.65);
+  --glass-border: rgba(255, 170, 50, 0.22);
+  --glass-glow: rgba(255, 140, 20, 0.15);
+  --font-sans: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-script: 'Caveat', cursive;
+  --font-serif: 'Playfair Display', Georgia, serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  position: relative;
+}
+
+/* ==========================================================================
+   Canvases
+   ========================================================================== */
+
+#bg-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  pointer-events: none;
+}
+
+#tree-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  cursor: pointer;
+}
+
+/* ==========================================================================
+   Interactive Floating Hearts Layer
+   ========================================================================== */
+
+#heart-particles {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 3;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.floating-heart {
+  position: absolute;
+  pointer-events: none;
+  animation: floatUpAndFade 2.6s cubic-bezier(0.2, 0.8, 0.3, 1) forwards;
+  will-change: transform, opacity;
+  filter: drop-shadow(0 0 8px rgba(255, 110, 40, 0.7));
+}
+
+@keyframes floatUpAndFade {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) scale(0.4) rotate(0deg);
+  }
+  15% {
+    opacity: 1;
+    transform: translate(0, -20px) scale(1.1) rotate(6deg);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--drift-x, 15px), -180px) scale(0.85) rotate(var(--rot, 20deg));
+  }
+}
+
+/* ==========================================================================
+   Top Header Controls
+   ========================================================================== */
+
+.top-controls {
+  position: fixed;
+  top: 18px;
+  left: 0;
+  width: 100%;
+  padding: 0 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 10;
+  pointer-events: auto;
+}
+
+.glass-pill-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 8px 24px var(--glass-glow);
+  color: #fff;
+  padding: 8px 16px;
+  border-radius: 999px;
+  font-size: 13.5px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-pill-btn:hover {
+  background: rgba(40, 25, 55, 0.85);
+  border-color: rgba(255, 180, 50, 0.5);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(255, 140, 20, 0.28);
+}
+
+.glass-pill-btn:active {
+  transform: translateY(1px);
+}
+
+.sound-wave {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2.5px;
+  height: 14px;
+}
+
+.sound-wave span {
+  width: 2.5px;
+  height: 4px;
+  background-color: var(--accent-gold);
+  border-radius: 2px;
+  transition: height 0.2s ease;
+}
+
+.sound-wave.playing span:nth-child(1) {
+  animation: wave 1s ease-in-out infinite 0.1s;
+}
+.sound-wave.playing span:nth-child(2) {
+  animation: wave 1s ease-in-out infinite 0.35s;
+}
+.sound-wave.playing span:nth-child(3) {
+  animation: wave 1s ease-in-out infinite 0.2s;
+}
+
+@keyframes wave {
+  0%, 100% { height: 3px; }
+  50% { height: 14px; }
+}
+
+/* ==========================================================================
+   Romantic Love Message (Under Tree Trunk)
+   ========================================================================== */
+
+.message-container {
+  position: fixed;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  z-index: 5;
+  pointer-events: none;
+  width: 92%;
+  max-width: 520px;
+}
+
+.message-glow-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.love-text {
+  font-family: var(--font-sans);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  text-align: center;
+  line-height: 1.25;
+}
+
+.love-text .sub-lead {
+  font-family: var(--font-script), 'Caveat', cursive;
+  font-size: clamp(1.4rem, 4vw, 1.95rem);
+  font-weight: 700;
+  color: #ffe0b2;
+  text-shadow: 0 0 16px rgba(255, 180, 50, 0.85), 0 0 28px rgba(255, 140, 20, 0.45);
+  letter-spacing: 0.6px;
+}
+
+.love-text .main-name {
+  font-size: clamp(1.85rem, 5.2vw, 2.6rem);
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  background: linear-gradient(135deg, #ffb347 0%, #ff6b35 50%, #ff8c42 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 0 16px rgba(255, 120, 40, 0.85)) drop-shadow(0 0 35px rgba(255, 180, 40, 0.4));
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.heart-emoji {
+  display: inline-block;
+  -webkit-text-fill-color: initial;
+  filter: drop-shadow(0 0 14px rgba(255, 110, 150, 0.9));
+  animation: heartPulse 1.8s ease-in-out infinite;
+  transform-origin: center;
+}
+
+@keyframes heartPulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  14% {
+    transform: scale(1.18);
+  }
+  28% {
+    transform: scale(1);
+  }
+  42% {
+    transform: scale(1.12);
+  }
+  70% {
+    transform: scale(1);
+  }
+}
+
+.personalized-note {
+  font-family: var(--font-script);
+  font-size: clamp(1.15rem, 3vw, 1.45rem);
+  color: #ffe8d6;
+  opacity: 0.9;
+  letter-spacing: 0.6px;
+  text-shadow: 0 0 12px rgba(255, 160, 60, 0.6);
+  min-height: 22px;
+}
+
+/* ==========================================================================
+   Bottom Action Dock
+   ========================================================================== */
+
+.bottom-dock {
+  position: fixed;
+  bottom: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.65), 0 0 20px var(--glass-glow);
+  padding: 6px 10px;
+  border-radius: 999px;
+  z-index: 10;
+  max-width: 95vw;
+}
+
+.dock-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  padding: 8px 12px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.dock-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--accent-gold);
+}
+
+.dock-btn:active {
+  transform: scale(0.96);
+}
+
+.dock-btn .btn-icon {
+  font-size: 15px;
+}
+
+.speed-selector {
+  display: flex;
+  background: rgba(0, 0, 0, 0.35);
+  border-radius: 999px;
+  padding: 2px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.speed-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  padding: 6px 10px;
+  font-size: 11.5px;
+  font-weight: 500;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.speed-btn.active {
+  background: linear-gradient(135deg, rgba(255, 158, 44, 0.3), rgba(230, 57, 70, 0.35));
+  color: #fff;
+  border: 1px solid rgba(255, 180, 50, 0.4);
+  box-shadow: 0 0 10px rgba(255, 150, 30, 0.3);
+}
+
+/* ==========================================================================
+   Gift Envelope Intro Overlay
+   ========================================================================== */
+
+.intro-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.7s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.7s;
+}
+
+.intro-overlay.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.intro-backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at center, rgba(20, 10, 30, 0.94) 0%, rgba(5, 3, 9, 0.98) 100%);
+  backdrop-filter: blur(8px);
+}
+
+.envelope-card {
+  position: relative;
+  z-index: 2;
+  width: 90%;
+  max-width: 380px;
+  background: linear-gradient(145deg, #180f24, #0f0a17);
+  border: 1px solid rgba(255, 160, 60, 0.35);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8), 0 0 40px rgba(255, 120, 30, 0.25);
+  border-radius: 24px;
+  padding: 40px 28px 34px;
+  text-align: center;
+  transform: translateY(0);
+  transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+  overflow: hidden;
+}
+
+.envelope-top-flare {
+  position: absolute;
+  top: -60px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 180px;
+  height: 120px;
+  background: radial-gradient(ellipse, rgba(255, 140, 20, 0.45) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.wax-seal {
+  position: relative;
+  width: 78px;
+  height: 78px;
+  margin: 0 auto 24px;
+  background: radial-gradient(circle, #e63946 0%, #8b1525 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 24px rgba(230, 57, 70, 0.6), inset 0 2px 4px rgba(255, 255, 255, 0.35);
+  cursor: pointer;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+}
+
+.wax-seal:hover {
+  transform: scale(1.08);
+  box-shadow: 0 12px 32px rgba(255, 70, 85, 0.8), inset 0 2px 4px rgba(255, 255, 255, 0.5);
+}
+
+.wax-seal .heart-icon {
+  font-size: 34px;
+  line-height: 1;
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.4));
+}
+
+.pulse-ring {
+  position: absolute;
+  top: -8px;
+  left: -8px;
+  right: -8px;
+  bottom: -8px;
+  border: 2px solid rgba(255, 150, 40, 0.6);
+  border-radius: 50%;
+  animation: pulseOut 2.2s cubic-bezier(0.2, 0.8, 0.3, 1) infinite;
+  pointer-events: none;
+}
+
+.pulse-ring.delay {
+  animation-delay: 1.1s;
+}
+
+@keyframes pulseOut {
+  0% {
+    transform: scale(0.9);
+    opacity: 0.9;
+  }
+  100% {
+    transform: scale(1.6);
+    opacity: 0;
+  }
+}
+
+.greeting-pre {
+  font-family: var(--font-script);
+  font-size: 1.4rem;
+  color: #ffb703;
+  margin-bottom: 6px;
+}
+
+.greeting-title {
+  font-family: var(--font-serif);
+  font-size: 2.1rem;
+  font-weight: 600;
+  color: #ffffff;
+  margin-bottom: 8px;
+  letter-spacing: -0.5px;
+}
+
+.greeting-subtitle {
+  font-size: 0.92rem;
+  color: var(--text-muted);
+  margin-bottom: 26px;
+  line-height: 1.5;
+}
+
+.open-action-btn {
+  background: linear-gradient(135deg, #ff9e2c 0%, #e63946 100%);
+  color: #fff;
+  border: none;
+  padding: 13px 30px;
+  border-radius: 999px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(230, 57, 70, 0.45);
+  transition: all 0.25s ease;
+  width: 100%;
+}
+
+.open-action-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px rgba(255, 100, 50, 0.6);
+}
+
+.open-action-btn:active {
+  transform: translateY(1px);
+}
+
+/* ==========================================================================
+   Toast Notification
+   ========================================================================== */
+
+.celebration-toast {
+  position: fixed;
+  top: 75px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-20px);
+  background: rgba(25, 15, 35, 0.85);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 180, 50, 0.35);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(255, 140, 20, 0.2);
+  color: #fff;
+  padding: 10px 22px;
+  border-radius: 999px;
+  font-size: 13.5px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  z-index: 20;
+  pointer-events: none;
+  max-width: 90vw;
+  text-align: center;
+}
+
+.celebration-toast.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* ==========================================================================
+   Personalization Modal
+   ========================================================================== */
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+.modal-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal-card {
+  width: 90%;
+  max-width: 420px;
+  background: #140d1f;
+  border: 1px solid rgba(255, 160, 60, 0.3);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.8), 0 0 35px rgba(255, 120, 30, 0.2);
+  border-radius: 20px;
+  padding: 24px;
+  transform: scale(0.92);
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.modal-overlay.active .modal-card {
+  transform: scale(1);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+.modal-header h3 {
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--accent-gold);
+}
+
+.modal-close-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 24px;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.modal-body label {
+  font-size: 12.5px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: -6px;
+}
+
+.modal-body input {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+  padding: 10px 14px;
+  color: #fff;
+  font-size: 14px;
+  outline: none;
+  font-family: inherit;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.modal-body input:focus {
+  border-color: var(--accent-orange);
+  box-shadow: 0 0 12px rgba(255, 140, 20, 0.3);
+}
+
+.modal-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.action-btn {
+  border: none;
+  padding: 11px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.action-btn.primary {
+  background: linear-gradient(135deg, #ff9e2c, #e63946);
+  color: #fff;
+}
+
+.action-btn.secondary {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.action-btn:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.1);
+}
+
+/* ==========================================================================
+   Responsive Adaptations
+   ========================================================================== */
+
+@media (max-width: 480px) {
+  .top-controls {
+    padding: 0 14px;
+    top: 12px;
+  }
+  
+  .glass-pill-btn {
+    padding: 6px 12px;
+    font-size: 12.5px;
+  }
+
+  .message-container {
+    bottom: 74px;
+  }
+
+  .love-text .sub-lead {
+    font-size: 1.35rem;
+  }
+
+  .love-text .main-name {
+    font-size: 1.85rem;
+  }
+
+  .bottom-dock {
+    bottom: 12px;
+    padding: 4px 8px;
+    gap: 4px;
+  }
+
+  .dock-btn {
+    padding: 6px 9px;
+    font-size: 12px;
+  }
+
+  .speed-btn {
+    padding: 5px 8px;
+    font-size: 10.5px;
+  }
+}

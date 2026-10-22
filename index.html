@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Always Stay Happy with me.. dear Sangu 💖✨ | Tree of Love</title>
+  
+  <!-- SEO & Social Sharing Preview -->
+  <meta name="description" content="A magical glowing fractal tree animation made with love. Open to watch it bloom.">
+  <meta property="og:title" content="Always Stay Happy with me.. dear Sangu 💖✨">
+  <meta property="og:description" content="Click to watch the tree of love bloom gently just for you.">
+  <meta property="og:type" content="website">
+  
+  <!-- Modern Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;1,400&display=swap" rel="stylesheet">
+  
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Ambient Background Canvas (Stars, Nebula, Fireflies) -->
+  <canvas id="bg-canvas"></canvas>
+
+  <!-- Main Fractal Tree Canvas -->
+  <canvas id="tree-canvas"></canvas>
+
+  <!-- Interactive Floating Hearts Container -->
+  <div id="heart-particles" aria-hidden="true"></div>
+
+  <!-- Romantic Gift Envelope Modal (Appears on first load) -->
+  <div id="intro-overlay" class="intro-overlay">
+    <div class="intro-backdrop"></div>
+    <div class="envelope-card" id="envelope-card">
+      <div class="envelope-top-flare"></div>
+      <div class="wax-seal" id="open-btn" role="button" tabindex="0" aria-label="Open Gift">
+        <span class="heart-icon">💖</span>
+        <span class="pulse-ring"></span>
+        <span class="pulse-ring delay"></span>
+      </div>
+      <div class="envelope-content">
+        <p class="greeting-pre">Ek pyara sa tohfa...</p>
+        <h1 class="greeting-title" id="intro-name">For Sangu 💖</h1>
+        <p class="greeting-subtitle">Tap the heart to open your surprise ✨</p>
+        <button class="open-action-btn" id="open-btn-text">
+          <span>Khuliye Pyaar Se 💌</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Audio & Ambient Toggle -->
+  <div class="top-controls">
+    <button id="music-toggle" class="glass-pill-btn" aria-label="Toggle Romantic Music" title="Romantic Music">
+      <span class="music-icon" id="music-icon">🎵</span>
+      <span class="music-label" id="music-label">Music</span>
+      <div class="sound-wave" id="sound-wave">
+        <span></span><span></span><span></span>
+      </div>
+    </button>
+    
+    <button id="customize-btn" class="glass-pill-btn" aria-label="Customize Message" title="Customize Text / Name">
+      <span>✏️</span>
+      <span class="pill-text">Customize</span>
+    </button>
+  </div>
+
+  <!-- Tree Bottom Love Message Container -->
+  <div class="message-container" id="message-container">
+    <div class="message-glow-wrapper">
+      <h2 class="love-text" id="love-text">
+        <span class="sub-lead">Always Stay Happy with me..</span>
+        <span class="main-name">dear Sangu <span class="heart-emoji">💖✨</span></span>
+      </h2>
+      <p class="personalized-note" id="personalized-note"></p>
+    </div>
+  </div>
+
+  <!-- Bottom Floating Control Dock -->
+  <nav class="bottom-dock" id="bottom-dock" aria-label="Animation Controls">
+    <button id="replay-btn" class="dock-btn" title="Watch Tree Grow Again">
+      <span class="btn-icon">↺</span>
+      <span class="btn-label">Replay</span>
+    </button>
+    
+    <div class="speed-selector" title="Animation Speed">
+      <button class="speed-btn active" data-speed="1" title="Aaram se (Romantic & Slow)">🐢 Aaram Se</button>
+      <button class="speed-btn" data-speed="1.75" title="Thoda Fast">⚡ Fast</button>
+    </div>
+
+    <button id="screenshot-btn" class="dock-btn" title="Save as Wallpaper">
+      <span class="btn-icon">📸</span>
+      <span class="btn-label">Wallpaper</span>
+    </button>
+    
+    <button id="share-btn" class="dock-btn" title="Copy Link to Share">
+      <span class="btn-icon">🔗</span>
+      <span class="btn-label">Share Link</span>
+    </button>
+  </nav>
+
+  <!-- Finished Tree Celebration Banner -->
+  <div id="celebration-toast" class="celebration-toast">
+    <span class="toast-heart">💖</span>
+    <span class="toast-text" id="toast-text">Always Stay Happy with me.. dear Sangu ✨</span>
+  </div>
+
+  <!-- Personalization Modal -->
+  <div id="customize-modal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>Pyaar Bhara Sandesh Badlein 💌</h3>
+        <button id="modal-close" class="modal-close-btn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <label for="input-name">Uska Naam (Her Name):</label>
+        <input type="text" id="input-name" placeholder="e.g. Sangu" maxlength="25" value="Sangu">
+
+        <label for="input-message">Message Text:</label>
+        <input type="text" id="input-message" placeholder="Always Stay Happy with me.. dear Sangu 💖✨" maxlength="70" value="Always Stay Happy with me.. dear Sangu 💖✨">
+
+        <label for="input-note">Chhota sa Note (Optional):</label>
+        <input type="text" id="input-note" placeholder="Always & Forever with you ✨" maxlength="50">
+
+        <div class="modal-actions">
+          <button id="save-settings-btn" class="action-btn primary">Save & Update</button>
+          <button id="copy-custom-link-btn" class="action-btn secondary">Copy Shareable Link 🔗</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Core Javascript -->
+  <script src="script.js"></script>
+</body>
+</html>
