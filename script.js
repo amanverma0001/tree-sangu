@@ -34,6 +34,31 @@
   const celebrationToast = document.getElementById('celebration-toast');
   const toastText = document.getElementById('toast-text');
 
+  // Photo Modal elements
+  const photoModal = document.getElementById('photo-modal');
+  const photoModalOpenBtn = document.getElementById('photo-modal-open-btn');
+  const photoModalClose = document.getElementById('photo-modal-close');
+  const photoModalBackdrop = document.getElementById('photo-modal-backdrop');
+
+  if (photoModalOpenBtn && photoModal) {
+    photoModalOpenBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      photoModal.classList.add('active');
+    });
+
+    if (photoModalClose) {
+      photoModalClose.addEventListener('click', () => {
+        photoModal.classList.remove('active');
+      });
+    }
+
+    if (photoModalBackdrop) {
+      photoModalBackdrop.addEventListener('click', () => {
+        photoModal.classList.remove('active');
+      });
+    }
+  }
+
   // Dismiss toast if tapped
   if (celebrationToast) {
     celebrationToast.addEventListener('click', () => {
@@ -637,7 +662,6 @@
   function onTreeFinished() {
     renderCompletedTreeStatic();
 
-    // Show the sweet 3-line romantic note
     toastText.innerHTML = `
       <div class="toast-lines">
         <span class="toast-line">i like you a lot dear...</span>
@@ -685,7 +709,7 @@
   }
 
   window.addEventListener('click', (e) => {
-    if (e.target.closest('.bottom-dock') || e.target.closest('.top-controls')) {
+    if (e.target.closest('.bottom-dock') || e.target.closest('.top-controls') || e.target.closest('.photo-modal-card')) {
       return;
     }
     createFloatingHeart(e.clientX, e.clientY);
@@ -694,7 +718,7 @@
   window.addEventListener('touchstart', (e) => {
     if (e.touches && e.touches[0]) {
       const t = e.touches[0];
-      if (!t.target.closest('.bottom-dock') && !t.target.closest('.top-controls')) {
+      if (!t.target.closest('.bottom-dock') && !t.target.closest('.top-controls') && !t.target.closest('.photo-modal-card')) {
         createFloatingHeart(t.clientX, t.clientY);
       }
     }
@@ -782,8 +806,6 @@
     }
 
     isMusicPlaying = true;
-
-    // Restore volume
     masterGain.gain.cancelScheduledValues(audioCtx.currentTime);
     masterGain.gain.setValueAtTime(0.35, audioCtx.currentTime);
 
@@ -810,13 +832,11 @@
       musicInterval = null;
     }
 
-    // INSTANT SILENCE: mute gain immediately
     if (audioCtx && masterGain) {
       masterGain.gain.cancelScheduledValues(audioCtx.currentTime);
       masterGain.gain.setValueAtTime(0, audioCtx.currentTime);
     }
 
-    // Stop and disconnect all active oscillators
     activeOscillators.forEach(osc => {
       try {
         osc.stop();
@@ -840,13 +860,13 @@
     introOverlay.classList.add('hidden');
     startMusicLoop();
 
-    for (let i = 0; i < 12; i++) {
+    for (let i = 0; i < 14; i++) {
       setTimeout(() => {
         createFloatingHeart(
-          viewWidth * 0.5 + (Math.random() - 0.5) * 160,
-          viewHeight * 0.5 + (Math.random() - 0.5) * 160
+          viewWidth * 0.5 + (Math.random() - 0.5) * 180,
+          viewHeight * 0.5 + (Math.random() - 0.5) * 180
         );
-      }, i * 80);
+      }, i * 75);
     }
 
     setTimeout(() => {
@@ -854,8 +874,8 @@
     }, 400);
   }
 
-  openBtn.addEventListener('click', openGift);
-  openBtnText.addEventListener('click', openGift);
+  if (openBtn) openBtn.addEventListener('click', openGift);
+  if (openBtnText) openBtnText.addEventListener('click', openGift);
 
   // --- Speed Selector ---
   speedBtns.forEach(btn => {

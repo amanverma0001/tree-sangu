@@ -6,7 +6,7 @@
   <title>Always Stay Happy with me.. dear Sangu 💖✨ | Tree of Love</title>
   
   <!-- SEO & Social Sharing Preview -->
-  <meta name="description" content="A magical glowing fractal tree animation made with love. Open to watch it bloom.">
+  <meta name="description" content="A magical glowing fractal tree animation made with love for Sangu.">
   <meta property="og:title" content="Always Stay Happy with me.. dear Sangu 💖✨">
   <meta property="og:description" content="Click to watch the tree of love bloom gently just for you.">
   <meta property="og:type" content="website">
@@ -30,29 +30,48 @@
   <!-- Interactive Floating Hearts Container -->
   <div id="heart-particles" aria-hidden="true"></div>
 
-  <!-- Romantic Gift Envelope Modal (Appears on first load) -->
+  <!-- Romantic Gift Envelope / Home Page Card (Appears on first load) -->
   <div id="intro-overlay" class="intro-overlay">
     <div class="intro-backdrop"></div>
     <div class="envelope-card" id="envelope-card">
       <div class="envelope-top-flare"></div>
-      <div class="wax-seal" id="open-btn" role="button" tabindex="0" aria-label="Open Gift">
-        <span class="heart-icon">💖</span>
-        <span class="pulse-ring"></span>
-        <span class="pulse-ring delay"></span>
-      </div>
+
       <div class="envelope-content">
         <p class="greeting-pre">Ek pyara sa tohfa...</p>
         <h1 class="greeting-title" id="intro-name">For Sangu 💖</h1>
-        <p class="greeting-subtitle">Tap the heart to open your surprise ✨</p>
+
+        <!-- Hero Photo Frame with Floating Glow & Shimmer -->
+        <div class="hero-photo-wrapper">
+          <div class="photo-glow-ring"></div>
+          <div class="photo-frame">
+            <img src="sangu.jpg" alt="Sangu" class="hero-photo" id="hero-photo" loading="eager">
+            <div class="photo-shimmer"></div>
+            <div class="photo-badge" title="My Love">
+              <span>💖</span>
+            </div>
+          </div>
+          <span class="photo-sparkle s1" aria-hidden="true">✨</span>
+          <span class="photo-sparkle s2" aria-hidden="true">🌸</span>
+          <span class="photo-sparkle s3" aria-hidden="true">✨</span>
+        </div>
+
+        <p class="greeting-subtitle">Tap below to watch your tree bloom ✨</p>
+        
         <button class="open-action-btn" id="open-btn-text">
+          <span class="btn-heart-pulse">💖</span>
           <span>Khuliye Pyaar Se 💌</span>
         </button>
       </div>
     </div>
   </div>
 
-  <!-- Audio Toggle (Top Right) -->
+  <!-- Top Controls (Photo Lightbox & Music Toggle) -->
   <div class="top-controls">
+    <button id="photo-modal-open-btn" class="glass-pill-btn photo-pill" aria-label="View Sangu Photo" title="View Sangu's Photo">
+      <span class="photo-btn-thumb"><img src="sangu.jpg" alt="Sangu Thumbnail"></span>
+      <span class="photo-btn-text">Her Picture 💖</span>
+    </button>
+
     <button id="music-toggle" class="glass-pill-btn" aria-label="Toggle Romantic Music" title="Romantic Music">
       <span class="music-icon" id="music-icon">🎵</span>
       <span class="music-label" id="music-label">Music</span>
@@ -104,6 +123,21 @@
         <span class="toast-line">i like you a lot dear...</span>
         <span class="toast-line">love your voice and the way you look..</span>
         <span class="toast-line highlight">want to know you more bbu. 💖✨</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Romantic Photo Lightbox Modal -->
+  <div id="photo-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="photo-modal-backdrop" id="photo-modal-backdrop"></div>
+    <div class="photo-modal-card">
+      <button id="photo-modal-close" class="modal-close-icon" aria-label="Close Photo">&times;</button>
+      <div class="photo-modal-frame">
+        <img src="sangu.jpg" alt="Sangu" class="modal-photo">
+      </div>
+      <div class="photo-modal-caption">
+        <p class="caption-title">Ho, aate-jaate dekhoon tujh ko 🌸</p>
+        <p class="caption-sub">Jaane hua hai ye kya mujh ko... 💖✨</p>
       </div>
     </div>
   </div>
