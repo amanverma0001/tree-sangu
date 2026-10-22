@@ -2,7 +2,7 @@
  * Romantic Fractal Tree Animation Web App
  * Step-by-step growing fractal tree with glowing fairy blossoms,
  * authentic turtle cursor, ambient stardust, Web Audio music box,
- * and custom romantic messages.
+ * photo memories gallery with interactive slideshow, and custom romantic messages.
  */
 
 (function() {
@@ -34,35 +34,226 @@
   const celebrationToast = document.getElementById('celebration-toast');
   const toastText = document.getElementById('toast-text');
 
-  // Photo Modal elements
+  // --- Sangu Photo Memories Gallery Data ---
+  const sanguPhotos = [
+    {
+      src: 'sangu_1.jpg',
+      title: 'Ho, aate-jaate dekhoon tujh ko 🌹',
+      sub: 'Jaane hua hai ye kya mujh ko... ✨'
+    },
+    {
+      src: 'sangu_2.jpg',
+      title: 'The way you look... 💖✨',
+      sub: 'Har andaaz me behad khoobsurat bbu 🥰'
+    },
+    {
+      src: 'sangu_3.jpg',
+      title: 'Nain~Matakka & Pyari Smile 🌸',
+      sub: 'Teal saree, green bangles & your lovely smile ✨'
+    },
+    {
+      src: 'sangu_4.jpg',
+      title: 'Shirt Da Button 🎶💖',
+      sub: 'Love your voice & sweetness... always stay happy with me ✨'
+    }
+  ];
+
+  // Photo Modal Elements
   const photoModal = document.getElementById('photo-modal');
   const photoModalOpenBtn = document.getElementById('photo-modal-open-btn');
+  const galleryDockBtn = document.getElementById('gallery-dock-btn');
   const photoModalClose = document.getElementById('photo-modal-close');
   const photoModalBackdrop = document.getElementById('photo-modal-backdrop');
+  const galleryImg = document.getElementById('gallery-img');
+  const galleryTitle = document.getElementById('gallery-title');
+  const gallerySub = document.getElementById('gallery-sub');
+  const galleryCounter = document.getElementById('gallery-counter');
+  const galleryPrev = document.getElementById('gallery-prev');
+  const galleryNext = document.getElementById('gallery-next');
+  const thumbBtns = document.querySelectorAll('.thumb-btn');
 
-  if (photoModalOpenBtn && photoModal) {
-    photoModalOpenBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      photoModal.classList.add('active');
-    });
+  let currentGalleryIndex = 0;
 
-    if (photoModalClose) {
-      photoModalClose.addEventListener('click', () => {
-        photoModal.classList.remove('active');
-      });
+  function openPhotoModal(index = 0) {
+    if (!photoModal) return;
+    currentGalleryIndex = ((index % sanguPhotos.length) + sanguPhotos.length) % sanguPhotos.length;
+    updateGalleryView(currentGalleryIndex);
+    photoModal.classList.add('active');
+    photoModal.setAttribute('aria-hidden', 'false');
+  }
+
+  function closePhotoModal() {
+    if (!photoModal) return;
+    photoModal.classList.remove('active');
+    photoModal.setAttribute('aria-hidden', 'true');
+  }
+
+  function updateGalleryView(index) {
+    currentGalleryIndex = ((index % sanguPhotos.length) + sanguPhotos.length) % sanguPhotos.length;
+    const photo = sanguPhotos[currentGalleryIndex];
+
+    if (galleryImg) {
+      galleryImg.style.opacity = '0.2';
+      galleryImg.style.transform = 'scale(0.96)';
+      setTimeout(() => {
+        galleryImg.src = photo.src;
+        galleryImg.alt = photo.title;
+        galleryImg.style.opacity = '1';
+        galleryImg.style.transform = 'scale(1)';
+      }, 140);
     }
 
-    if (photoModalBackdrop) {
-      photoModalBackdrop.addEventListener('click', () => {
-        photoModal.classList.remove('active');
-      });
+    if (galleryTitle) galleryTitle.textContent = photo.title;
+    if (gallerySub) gallerySub.textContent = photo.sub;
+    if (galleryCounter) galleryCounter.textContent = `${currentGalleryIndex + 1} / ${sanguPhotos.length}`;
+
+    thumbBtns.forEach((btn, idx) => {
+      if (idx === currentGalleryIndex) {
+        btn.classList.add('active');
+      } else {
+        btn.classList.remove('active');
+      }
+    });
+  }
+
+  if (photoModalOpenBtn) {
+    photoModalOpenBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      openPhotoModal(0);
+    });
+  }
+
+  if (galleryDockBtn) {
+    galleryDockBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      openPhotoModal(0);
+    });
+  }
+
+  if (photoModalClose) {
+    photoModalClose.addEventListener('click', closePhotoModal);
+  }
+
+  if (photoModalBackdrop) {
+    photoModalBackdrop.addEventListener('click', closePhotoModal);
+  }
+
+  if (galleryPrev) {
+    galleryPrev.addEventListener('click', (e) => {
+      e.stopPropagation();
+      updateGalleryView(currentGalleryIndex - 1);
+    });
+  }
+
+  if (galleryNext) {
+    galleryNext.addEventListener('click', (e) => {
+      e.stopPropagation();
+      updateGalleryView(currentGalleryIndex + 1);
+    });
+  }
+
+  thumbBtns.forEach((btn, idx) => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      updateGalleryView(idx);
+    });
+  });
+
+  // Swipe support on gallery modal for mobile devices
+  const modalFrame = document.querySelector('.photo-modal-frame');
+  if (modalFrame) {
+    let touchStartX = 0;
+    let touchEndX = 0;
+    modalFrame.addEventListener('touchstart', (e) => {
+      touchStartX = e.changedTouches[0].screenX;
+    }, { passive: true });
+    modalFrame.addEventListener('touchend', (e) => {
+      touchEndX = e.changedTouches[0].screenX;
+      if (touchStartX - touchEndX > 45) {
+        updateGalleryView(currentGalleryIndex + 1);
+      } else if (touchEndX - touchStartX > 45) {
+        updateGalleryView(currentGalleryIndex - 1);
+      }
+    }, { passive: true });
+  }
+
+  // Keyboard navigation for gallery
+  window.addEventListener('keydown', (e) => {
+    if (!photoModal || !photoModal.classList.contains('active')) return;
+    if (e.key === 'ArrowLeft') {
+      updateGalleryView(currentGalleryIndex - 1);
+    } else if (e.key === 'ArrowRight') {
+      updateGalleryView(currentGalleryIndex + 1);
+    } else if (e.key === 'Escape') {
+      closePhotoModal();
+    }
+  });
+
+  // --- Intro Slideshow ---
+  const heroSlides = document.querySelectorAll('#intro-slideshow .slide');
+  const slideDots = document.querySelectorAll('#slide-dots .slide-dot');
+  let currentHeroSlide = 0;
+  let heroSlideshowTimer = null;
+
+  function showHeroSlide(index) {
+    if (!heroSlides.length) return;
+    currentHeroSlide = ((index % heroSlides.length) + heroSlides.length) % heroSlides.length;
+
+    heroSlides.forEach((slide, idx) => {
+      if (idx === currentHeroSlide) {
+        slide.classList.add('active');
+      } else {
+        slide.classList.remove('active');
+      }
+    });
+
+    slideDots.forEach((dot, idx) => {
+      if (idx === currentHeroSlide) {
+        dot.classList.add('active');
+      } else {
+        dot.classList.remove('active');
+      }
+    });
+  }
+
+  function nextHeroSlide() {
+    showHeroSlide(currentHeroSlide + 1);
+  }
+
+  function startHeroSlideshow() {
+    if (heroSlideshowTimer) clearInterval(heroSlideshowTimer);
+    heroSlideshowTimer = setInterval(nextHeroSlide, 3200);
+  }
+
+  function stopHeroSlideshow() {
+    if (heroSlideshowTimer) {
+      clearInterval(heroSlideshowTimer);
+      heroSlideshowTimer = null;
     }
   }
 
-  // Dismiss toast if tapped
+  slideDots.forEach((dot, idx) => {
+    dot.addEventListener('click', (e) => {
+      e.stopPropagation();
+      showHeroSlide(idx);
+      startHeroSlideshow();
+    });
+  });
+
+  const heroPhotoWrapper = document.querySelector('.hero-photo-wrapper');
+  if (heroPhotoWrapper) {
+    heroPhotoWrapper.addEventListener('click', (e) => {
+      if (!e.target.classList.contains('slide-dot')) {
+        openPhotoModal(currentHeroSlide);
+      }
+    });
+  }
+
+  // Dismiss toast if tapped, and open photo gallery
   if (celebrationToast) {
     celebrationToast.addEventListener('click', () => {
       celebrationToast.classList.remove('show');
+      openPhotoModal(0);
     });
   }
 
@@ -459,7 +650,7 @@
     });
     recurseBranch(rightX, rightY, -90 + angleDelta, startLen, totalDepth - 2);
 
-    // 5. Completion
+    // Completion
     animationQueue.push({
       type: 'FINISH_TREE',
       x: rootX,
@@ -857,6 +1048,7 @@
 
   // --- Intro Open Action ---
   function openGift() {
+    stopHeroSlideshow();
     introOverlay.classList.add('hidden');
     startMusicLoop();
 
@@ -962,6 +1154,8 @@
     parseQueryParams();
     resizeCanvases();
     renderBackground();
+    startHeroSlideshow();
+    updateGalleryView(0);
 
     const params = new URLSearchParams(window.location.search);
     if (params.get('autostart') === 'true') {

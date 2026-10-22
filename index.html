@@ -40,12 +40,23 @@
         <p class="greeting-pre">Ek pyara sa tohfa...</p>
         <h1 class="greeting-title" id="intro-name">For Sangu 💖</h1>
 
-        <!-- Hero Photo Frame with Floating Glow & Shimmer -->
+        <!-- Hero Photo Frame with Slideshow, Glow & Shimmer -->
         <div class="hero-photo-wrapper">
           <div class="photo-glow-ring"></div>
           <div class="photo-frame">
-            <img src="sangu.jpg" alt="Sangu" class="hero-photo" id="hero-photo" loading="eager">
+            <div class="slideshow-container" id="intro-slideshow">
+              <img src="sangu_1.jpg" alt="Sangu 1" class="hero-photo slide active">
+              <img src="sangu_2.jpg" alt="Sangu 2" class="hero-photo slide">
+              <img src="sangu_3.jpg" alt="Sangu 3" class="hero-photo slide">
+              <img src="sangu_4.jpg" alt="Sangu 4" class="hero-photo slide">
+            </div>
             <div class="photo-shimmer"></div>
+            <div class="slide-dots" id="slide-dots">
+              <span class="slide-dot active" data-index="0"></span>
+              <span class="slide-dot" data-index="1"></span>
+              <span class="slide-dot" data-index="2"></span>
+              <span class="slide-dot" data-index="3"></span>
+            </div>
             <div class="photo-badge" title="My Love">
               <span>💖</span>
             </div>
@@ -65,11 +76,11 @@
     </div>
   </div>
 
-  <!-- Top Controls (Photo Lightbox & Music Toggle) -->
+  <!-- Top Controls (Photo Gallery & Music Toggle) -->
   <div class="top-controls">
-    <button id="photo-modal-open-btn" class="glass-pill-btn photo-pill" aria-label="View Sangu Photo" title="View Sangu's Photo">
-      <span class="photo-btn-thumb"><img src="sangu.jpg" alt="Sangu Thumbnail"></span>
-      <span class="photo-btn-text">Her Picture 💖</span>
+    <button id="photo-modal-open-btn" class="glass-pill-btn photo-pill" aria-label="View Sangu Photos" title="View Sangu's Photos">
+      <span class="photo-btn-thumb"><img src="sangu_1.jpg" alt="Sangu Thumbnail" id="header-thumb"></span>
+      <span class="photo-btn-text">Memories (4) 💖</span>
     </button>
 
     <button id="music-toggle" class="glass-pill-btn" aria-label="Toggle Romantic Music" title="Romantic Music">
@@ -98,6 +109,11 @@
       <span class="btn-icon">↺</span>
       <span class="btn-label">Replay</span>
     </button>
+
+    <button id="gallery-dock-btn" class="dock-btn" title="View Sangu's Photos">
+      <span class="btn-icon">📸</span>
+      <span class="btn-label">Memories</span>
+    </button>
     
     <div class="speed-selector" title="Animation Speed">
       <button class="speed-btn active" data-speed="1" title="Aaram se (Romantic & Slow)">🐢 Aaram Se</button>
@@ -105,7 +121,7 @@
     </div>
 
     <button id="screenshot-btn" class="dock-btn" title="Save as Wallpaper">
-      <span class="btn-icon">📸</span>
+      <span class="btn-icon">🖼️</span>
       <span class="btn-label">Wallpaper</span>
     </button>
     
@@ -127,17 +143,35 @@
     </div>
   </div>
 
-  <!-- Romantic Photo Lightbox Modal -->
+  <!-- Romantic Photo Gallery Lightbox Modal -->
   <div id="photo-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-hidden="true">
     <div class="photo-modal-backdrop" id="photo-modal-backdrop"></div>
     <div class="photo-modal-card">
-      <button id="photo-modal-close" class="modal-close-icon" aria-label="Close Photo">&times;</button>
-      <div class="photo-modal-frame">
-        <img src="sangu.jpg" alt="Sangu" class="modal-photo">
+      <button id="photo-modal-close" class="modal-close-icon" aria-label="Close Photo Gallery">&times;</button>
+      
+      <div class="gallery-counter" id="gallery-counter">1 / 4</div>
+
+      <div class="photo-modal-frame-wrapper">
+        <button class="gallery-nav-btn prev" id="gallery-prev" aria-label="Previous Photo">&#10094;</button>
+
+        <div class="photo-modal-frame">
+          <img src="sangu_1.jpg" alt="Sangu" class="modal-photo" id="gallery-img">
+        </div>
+
+        <button class="gallery-nav-btn next" id="gallery-next" aria-label="Next Photo">&#10095;</button>
       </div>
+
       <div class="photo-modal-caption">
-        <p class="caption-title">Ho, aate-jaate dekhoon tujh ko 🌸</p>
-        <p class="caption-sub">Jaane hua hai ye kya mujh ko... 💖✨</p>
+        <p class="caption-title" id="gallery-title">Ho, aate-jaate dekhoon tujh ko 🌹</p>
+        <p class="caption-sub" id="gallery-sub">Jaane hua hai ye kya mujh ko... ✨</p>
+      </div>
+
+      <!-- Thumbnail Strip -->
+      <div class="gallery-thumbs" id="gallery-thumbs">
+        <button class="thumb-btn active" data-index="0"><img src="sangu_1.jpg" alt="Thumb 1"></button>
+        <button class="thumb-btn" data-index="1"><img src="sangu_2.jpg" alt="Thumb 2"></button>
+        <button class="thumb-btn" data-index="2"><img src="sangu_3.jpg" alt="Thumb 3"></button>
+        <button class="thumb-btn" data-index="3"><img src="sangu_4.jpg" alt="Thumb 4"></button>
       </div>
     </div>
   </div>
