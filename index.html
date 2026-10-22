@@ -102,9 +102,15 @@
   </nav>
 
   <!-- Finished Tree Celebration Banner -->
-  <div id="celebration-toast" class="celebration-toast">
+  <div id="celebration-toast" class="celebration-toast" role="status" aria-live="polite">
     <span class="toast-heart">💖</span>
-    <span class="toast-text" id="toast-text">Always Stay Happy with me.. dear Sangu ✨</span>
+    <div class="toast-text" id="toast-text">
+      <div class="toast-lines">
+        <span class="toast-line">i like you a lot dear...</span>
+        <span class="toast-line">love your voice and the way you look..</span>
+        <span class="toast-line highlight">want to know you more bbu. 💖✨</span>
+      </div>
+    </div>
   </div>
 
   <!-- Personalization Modal -->
@@ -122,7 +128,7 @@
         <input type="text" id="input-message" placeholder="Always Stay Happy with me.. dear Sangu 💖✨" maxlength="70" value="Always Stay Happy with me.. dear Sangu 💖✨">
 
         <label for="input-note">Chhota sa Note (Optional):</label>
-        <input type="text" id="input-note" placeholder="Always & Forever with you ✨" maxlength="50">
+        <input type="text" id="input-note" placeholder="want to know you more bbu. 💖✨" maxlength="50" value="want to know you more bbu. 💖✨">
 
         <div class="modal-actions">
           <button id="save-settings-btn" class="action-btn primary">Save & Update</button>

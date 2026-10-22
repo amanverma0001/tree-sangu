@@ -43,6 +43,13 @@
   const celebrationToast = document.getElementById('celebration-toast');
   const toastText = document.getElementById('toast-text');
 
+  // Dismiss toast if tapped
+  if (celebrationToast) {
+    celebrationToast.addEventListener('click', () => {
+      celebrationToast.classList.remove('show');
+    });
+  }
+
   // --- Configuration & State ---
   let speedMultiplier = 1.0;
   let animationRunning = false;
@@ -50,7 +57,7 @@
   let userConfig = {
     name: 'Sangu',
     message: 'Always Stay Happy with me.. dear Sangu 💖✨',
-    note: 'With all my heart, forever ✨'
+    note: 'want to know you more bbu. 💖✨'
   };
 
   // Canvas size and scale
@@ -61,21 +68,20 @@
   // Animation Action Queue
   let animationQueue = [];
   let currentActionIndex = 0;
-  let currentSegmentProgress = 0; // 0.0 to 1.0
+  let currentSegmentProgress = 0;
   let turtle = {
     x: 0,
     y: 0,
-    heading: -90, // degrees: -90 is pointing straight up
+    heading: -90,
     visible: true,
     size: 16,
     color: '#e63946'
   };
 
-  // Persistent rendered static canvas (so completed branches stay drawn efficiently)
   let staticCanvas = document.createElement('canvas');
   let staticCtx = staticCanvas.getContext('2d');
 
-  // Ambient particles (Background stars & fireflies)
+  // Ambient particles
   const bgStars = [];
   const fireflies = [];
   const MAX_STARS = 60;
@@ -112,7 +118,6 @@
 
     personalizedNoteEl.textContent = userConfig.note || '';
 
-    // Populate inputs in modal
     inputName.value = userConfig.name;
     inputMessage.value = userConfig.message;
     inputNote.value = userConfig.note;
@@ -193,7 +198,6 @@
   function renderBackground() {
     bgCtx.clearRect(0, 0, viewWidth, viewHeight);
 
-    // Deep Romantic Space Gradient
     const grad = bgCtx.createRadialGradient(
       viewWidth * 0.5, viewHeight * 0.4, 40,
       viewWidth * 0.5, viewHeight * 0.4, Math.max(viewWidth, viewHeight) * 0.8
@@ -204,7 +208,6 @@
     bgCtx.fillStyle = grad;
     bgCtx.fillRect(0, 0, viewWidth, viewHeight);
 
-    // Subtle cosmic glow behind tree canopy
     const canopyGlow = bgCtx.createRadialGradient(
       viewWidth * 0.5, viewHeight * 0.35, 10,
       viewWidth * 0.5, viewHeight * 0.35, Math.min(viewWidth, viewHeight) * 0.45
@@ -215,7 +218,6 @@
     bgCtx.fillStyle = canopyGlow;
     bgCtx.fillRect(0, 0, viewWidth, viewHeight);
 
-    // Draw stars
     const now = Date.now() * 0.001;
     bgStars.forEach(star => {
       const a = star.alpha + Math.sin(now * 2 + star.twinklePhase) * 0.25;
@@ -225,7 +227,6 @@
       bgCtx.fill();
     });
 
-    // Draw & update fireflies
     fireflies.forEach(f => {
       f.x += f.vx;
       f.y += f.vy;
@@ -260,7 +261,6 @@
     const angleDelta = 28;
     const totalDepth = 8;
 
-    // 1. Initial State
     animationQueue.push({
       type: 'INIT_TURTLE',
       x: rootX,
@@ -268,14 +268,12 @@
       heading: -90
     });
 
-    // 2. Draw root base (small glowing red box / heart pedestal)
     animationQueue.push({
       type: 'DRAW_ROOT_BASE',
       x: rootX,
       y: rootY
     });
 
-    // 3. Draw Trunk upwards
     const trunkEndX = rootX;
     const trunkEndY = rootY - trunkLen;
     animationQueue.push({
@@ -299,7 +297,6 @@
       glow: 12
     });
 
-    // 4. Recursive Fractal Branching
     function recurseBranch(x, y, heading, len, depth) {
       if (depth === 0) {
         animationQueue.push({
@@ -469,7 +466,6 @@
     ctx.shadowBlur = 14;
     ctx.shadowColor = 'rgba(255, 60, 60, 0.9)';
 
-    // Turtle Shell
     ctx.fillStyle = '#d62828';
     ctx.beginPath();
     ctx.ellipse(0, 0, 7, 9, 0, 0, Math.PI * 2);
@@ -480,13 +476,11 @@
     ctx.ellipse(0, -1, 4, 6, 0, 0, Math.PI * 2);
     ctx.fill();
 
-    // Head
     ctx.fillStyle = '#b7094c';
     ctx.beginPath();
     ctx.arc(0, -11, 3.5, 0, Math.PI * 2);
     ctx.fill();
 
-    // Flippers / Legs
     ctx.fillStyle = '#c72c48';
     ctx.beginPath();
     ctx.arc(-7, -5, 2.5, 0, Math.PI * 2);
@@ -653,13 +647,19 @@
   function onTreeFinished() {
     renderCompletedTreeStatic();
 
-    toastText.textContent = `Always Stay Happy with me.. dear ${userConfig.name || 'Sangu'} 💖✨`;
+    // Show the sweet 3-line romantic note
+    toastText.innerHTML = `
+      <div class="toast-lines">
+        <span class="toast-line">i like you a lot dear...</span>
+        <span class="toast-line">love your voice and the way you look..</span>
+        <span class="toast-line highlight">want to know you more bbu. 💖✨</span>
+      </div>
+    `;
     celebrationToast.classList.add('show');
     setTimeout(() => {
       celebrationToast.classList.remove('show');
-    }, 4500);
+    }, 14000); // 14s so she can read each line with love
 
-    // Spawn cheerful celebration hearts
     for (let i = 0; i < 18; i++) {
       setTimeout(() => {
         const x = viewWidth * 0.5 + (Math.random() - 0.5) * (viewWidth * 0.7);
@@ -884,7 +884,7 @@
     link.href = exportCanvas.toDataURL('image/png');
     link.click();
 
-    toastText.textContent = 'Wallpaper saved to downloads! 📸';
+    toastText.innerHTML = '<span class="toast-line">Wallpaper saved to downloads! 📸</span>';
     celebrationToast.classList.add('show');
     setTimeout(() => celebrationToast.classList.remove('show'), 3000);
   });
@@ -902,7 +902,7 @@
 
     if (navigator.clipboard) {
       navigator.clipboard.writeText(url.toString()).then(() => {
-        toastText.textContent = 'Link copied! Send it on WhatsApp/Instagram 💌';
+        toastText.innerHTML = '<span class="toast-line">Link copied! Send it on WhatsApp/Instagram 💌</span>';
         celebrationToast.classList.add('show');
         setTimeout(() => celebrationToast.classList.remove('show'), 3500);
       });
@@ -928,7 +928,7 @@
     updateUIFromConfig();
     customizeModal.classList.remove('active');
 
-    toastText.textContent = 'Updated with love! ✨';
+    toastText.innerHTML = '<span class="toast-line highlight">Updated with love! ✨</span>';
     celebrationToast.classList.add('show');
     setTimeout(() => celebrationToast.classList.remove('show'), 2500);
   });
