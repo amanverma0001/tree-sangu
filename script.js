@@ -23,15 +23,6 @@
   const musicIcon = document.getElementById('music-icon');
   const musicLabel = document.getElementById('music-label');
   const soundWave = document.getElementById('sound-wave');
-  
-  const customizeBtn = document.getElementById('customize-btn');
-  const customizeModal = document.getElementById('customize-modal');
-  const modalClose = document.getElementById('modal-close');
-  const inputName = document.getElementById('input-name');
-  const inputMessage = document.getElementById('input-message');
-  const inputNote = document.getElementById('input-note');
-  const saveSettingsBtn = document.getElementById('save-settings-btn');
-  const copyCustomLinkBtn = document.getElementById('copy-custom-link-btn');
 
   const loveTextEl = document.getElementById('love-text');
   const personalizedNoteEl = document.getElementById('personalized-note');
@@ -117,10 +108,6 @@
     }
 
     personalizedNoteEl.textContent = userConfig.note || '';
-
-    inputName.value = userConfig.name;
-    inputMessage.value = userConfig.message;
-    inputNote.value = userConfig.note;
   }
 
   // --- Responsive Resizing ---
@@ -466,6 +453,7 @@
     ctx.shadowBlur = 14;
     ctx.shadowColor = 'rgba(255, 60, 60, 0.9)';
 
+    // Turtle Shell
     ctx.fillStyle = '#d62828';
     ctx.beginPath();
     ctx.ellipse(0, 0, 7, 9, 0, 0, Math.PI * 2);
@@ -476,11 +464,13 @@
     ctx.ellipse(0, -1, 4, 6, 0, 0, Math.PI * 2);
     ctx.fill();
 
+    // Head
     ctx.fillStyle = '#b7094c';
     ctx.beginPath();
     ctx.arc(0, -11, 3.5, 0, Math.PI * 2);
     ctx.fill();
 
+    // Flippers / Legs
     ctx.fillStyle = '#c72c48';
     ctx.beginPath();
     ctx.arc(-7, -5, 2.5, 0, Math.PI * 2);
@@ -658,7 +648,7 @@
     celebrationToast.classList.add('show');
     setTimeout(() => {
       celebrationToast.classList.remove('show');
-    }, 14000); // 14s so she can read each line with love
+    }, 14000);
 
     for (let i = 0; i < 18; i++) {
       setTimeout(() => {
@@ -695,7 +685,7 @@
   }
 
   window.addEventListener('click', (e) => {
-    if (e.target.closest('.bottom-dock') || e.target.closest('.top-controls') || e.target.closest('.modal-card')) {
+    if (e.target.closest('.bottom-dock') || e.target.closest('.top-controls')) {
       return;
     }
     createFloatingHeart(e.clientX, e.clientY);
@@ -704,17 +694,18 @@
   window.addEventListener('touchstart', (e) => {
     if (e.touches && e.touches[0]) {
       const t = e.touches[0];
-      if (!t.target.closest('.bottom-dock') && !t.target.closest('.top-controls') && !t.target.closest('.modal-card')) {
+      if (!t.target.closest('.bottom-dock') && !t.target.closest('.top-controls')) {
         createFloatingHeart(t.clientX, t.clientY);
       }
     }
   }, { passive: true });
 
-  // --- Romantic Ambient Music Box (Web Audio API Synthesizer) ---
+  // --- Robust Web Audio Romantic Music Synthesizer ---
   let audioCtx = null;
   let isMusicPlaying = false;
   let musicInterval = null;
   let masterGain = null;
+  let activeOscillators = [];
 
   function initAudio() {
     if (audioCtx) return;
@@ -739,15 +730,21 @@
       osc.type = 'sine';
       osc.frequency.setValueAtTime(freq, time);
 
-      gain.gain.setValueAtTime(0.001, time);
+      gain.gain.setValueAtTime(0.0001, time);
       gain.gain.exponentialRampToValueAtTime(0.28, time + 0.04);
-      gain.gain.exponentialRampToValueAtTime(0.001, time + duration);
+      gain.gain.exponentialRampToValueAtTime(0.0001, time + duration);
 
       osc.connect(gain);
       gain.connect(masterGain);
 
       osc.start(time);
       osc.stop(time + duration);
+
+      activeOscillators.push(osc);
+      osc.onended = () => {
+        const idx = activeOscillators.indexOf(osc);
+        if (idx > -1) activeOscillators.splice(idx, 1);
+      };
     } catch (e) {}
   }
 
@@ -766,24 +763,36 @@
     { notes: [329.63], delay: 8.0 }
   ];
 
+  function scheduleMelody() {
+    if (!isMusicPlaying || !audioCtx) return;
+    const now = audioCtx.currentTime;
+    romanticMelody.forEach(step => {
+      step.notes.forEach(freq => {
+        playChime(freq, now + step.delay);
+      });
+    });
+  }
+
   function startMusicLoop() {
     initAudio();
-    if (audioCtx && audioCtx.state === 'suspended') {
+    if (!audioCtx) return;
+
+    if (audioCtx.state === 'suspended') {
       audioCtx.resume();
     }
+
     isMusicPlaying = true;
+
+    // Restore volume
+    masterGain.gain.cancelScheduledValues(audioCtx.currentTime);
+    masterGain.gain.setValueAtTime(0.35, audioCtx.currentTime);
+
     soundWave.classList.add('playing');
     musicIcon.textContent = '🎶';
     musicLabel.textContent = 'Music On';
 
-    function scheduleMelody() {
-      if (!isMusicPlaying || !audioCtx) return;
-      const now = audioCtx.currentTime;
-      romanticMelody.forEach(step => {
-        step.notes.forEach(freq => {
-          playChime(freq, now + step.delay);
-        });
-      });
+    if (musicInterval) {
+      clearInterval(musicInterval);
     }
 
     scheduleMelody();
@@ -795,13 +804,30 @@
     soundWave.classList.remove('playing');
     musicIcon.textContent = '🎵';
     musicLabel.textContent = 'Music Off';
+
     if (musicInterval) {
       clearInterval(musicInterval);
       musicInterval = null;
     }
+
+    // INSTANT SILENCE: mute gain immediately
+    if (audioCtx && masterGain) {
+      masterGain.gain.cancelScheduledValues(audioCtx.currentTime);
+      masterGain.gain.setValueAtTime(0, audioCtx.currentTime);
+    }
+
+    // Stop and disconnect all active oscillators
+    activeOscillators.forEach(osc => {
+      try {
+        osc.stop();
+        osc.disconnect();
+      } catch (e) {}
+    });
+    activeOscillators = [];
   }
 
-  musicToggle.addEventListener('click', () => {
+  musicToggle.addEventListener('click', (e) => {
+    e.stopPropagation();
     if (isMusicPlaying) {
       stopMusic();
     } else {
@@ -910,37 +936,6 @@
       prompt('Copy this link to send to her:', url.toString());
     }
   }
-
-  // --- Personalization Modal ---
-  customizeBtn.addEventListener('click', () => {
-    customizeModal.classList.add('active');
-  });
-
-  modalClose.addEventListener('click', () => {
-    customizeModal.classList.remove('active');
-  });
-
-  saveSettingsBtn.addEventListener('click', () => {
-    userConfig.name = inputName.value.trim() || 'Sangu';
-    userConfig.message = inputMessage.value.trim() || 'Always Stay Happy with me.. dear Sangu 💖✨';
-    userConfig.note = inputNote.value.trim();
-
-    updateUIFromConfig();
-    customizeModal.classList.remove('active');
-
-    toastText.innerHTML = '<span class="toast-line highlight">Updated with love! ✨</span>';
-    celebrationToast.classList.add('show');
-    setTimeout(() => celebrationToast.classList.remove('show'), 2500);
-  });
-
-  copyCustomLinkBtn.addEventListener('click', () => {
-    userConfig.name = inputName.value.trim() || 'Sangu';
-    userConfig.message = inputMessage.value.trim() || 'Always Stay Happy with me.. dear Sangu 💖✨';
-    userConfig.note = inputNote.value.trim();
-    updateUIFromConfig();
-    copyShareableLink();
-    customizeModal.classList.remove('active');
-  });
 
   // --- Initialize App ---
   function init() {
