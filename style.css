@@ -108,7 +108,7 @@ html, body {
 }
 
 /* ==========================================================================
-   Canvases
+   Canvases & Layers Stacking
    ========================================================================== */
 
 #bg-canvas {
@@ -121,13 +121,134 @@ html, body {
   pointer-events: none;
 }
 
+/* Romantic Curved Name Arc ("Sangitaa Jii 💖✨") in Tree Crown */
+.tree-curved-name {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 8;
+  overflow: visible;
+}
+
+.curved-name-aura {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at center, rgba(255, 190, 60, 0.45) 0%, rgba(255, 60, 110, 0.3) 50%, transparent 75%);
+  filter: blur(45px);
+  opacity: 0;
+  transition: opacity 1.5s ease;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+}
+
+.curved-letters-wrap {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.tree-curved-slot {
+  position: absolute;
+  transform-origin: center center;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tree-curved-char {
+  display: inline-block;
+  transform-origin: center center;
+  font-family: 'Outfit', 'Playfair Display', sans-serif;
+  font-size: clamp(22px, 4.8vw, 38px);
+  font-weight: 800;
+  color: #ffbe0b;
+  opacity: 0;
+  transform: scale(0.3);
+  filter: blur(6px);
+  transition: opacity 0.4s ease, transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.4s ease, text-shadow 0.4s ease;
+  text-shadow: 0 0 10px #ffbe0b, 0 0 20px #fb8500;
+  white-space: pre;
+  user-select: none;
+  pointer-events: none;
+}
+
+.tree-curved-char.revealed {
+  opacity: 0.95;
+  filter: blur(0px);
+  transform: scale(1);
+  text-shadow: 0 0 14px #ffbe0b, 0 0 26px #fb8500, 0 0 42px rgba(255, 60, 110, 0.85);
+}
+
+.tree-curved-char.revealed.pop {
+  animation: charRevealPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes charRevealPop {
+  0% { transform: scale(0.3); opacity: 0; filter: blur(6px); }
+  50% { transform: scale(1.4); opacity: 1; filter: blur(0px); }
+  100% { transform: scale(1); opacity: 0.95; }
+}
+
+/* When Tree Completes - Grand Golden Highlight & Aura */
+.tree-curved-name.tree-completed .curved-name-aura {
+  opacity: 0.85;
+  animation: auraBreathe 4s ease-in-out infinite alternate;
+}
+
+@keyframes auraBreathe {
+  0% { transform: translate(-50%, -50%) scale(0.95); opacity: 0.7; }
+  100% { transform: translate(-50%, -50%) scale(1.15); opacity: 0.95; }
+}
+
+.tree-curved-name.tree-completed .tree-curved-char {
+  opacity: 1;
+  color: #ffffff;
+  text-shadow: 
+    0 0 10px #ffffff,
+    0 0 22px #ffbe0b,
+    0 0 38px #ff0055,
+    0 0 60px #ff7b00,
+    0 0 90px rgba(255, 0, 90, 0.95);
+  animation: completedCharPulse 2.5s ease-in-out infinite alternate;
+}
+
+.tree-curved-name.tree-completed .tree-curved-char.emoji-char {
+  filter: drop-shadow(0 0 18px rgba(255, 100, 150, 1)) drop-shadow(0 0 35px #ffbe0b);
+  animation: completedEmojiBeat 1.6s ease-in-out infinite;
+}
+
+@keyframes completedCharPulse {
+  0% {
+    transform: scale(1.02);
+    text-shadow: 0 0 10px #ffffff, 0 0 20px #ffbe0b, 0 0 35px #ff0055, 0 0 55px #ff7b00;
+  }
+  100% {
+    transform: scale(1.18);
+    text-shadow: 0 0 15px #ffffff, 0 0 30px #ffe066, 0 0 50px #ff006e, 0 0 75px #ff7b00, 0 0 110px rgba(255, 0, 100, 1);
+  }
+}
+
+@keyframes completedEmojiBeat {
+  0%, 100% { transform: scale(1.05); }
+  25% { transform: scale(1.35); }
+  50% { transform: scale(1.12); }
+  75% { transform: scale(1.28); }
+}
+
 #tree-canvas {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 2;
+  z-index: 3;
   cursor: pointer;
 }
 
@@ -144,7 +265,7 @@ html, body {
   height: 100%;
   pointer-events: none;
   overflow: hidden;
-  z-index: 2;
+  z-index: 3;
 }
 
 .home-floating-hearts {
@@ -189,7 +310,7 @@ html, body {
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 3;
+  z-index: 4;
   pointer-events: none;
   overflow: hidden;
 }
@@ -671,11 +792,13 @@ html, body {
 
 .greeting-title {
   font-family: var(--font-serif);
-  font-size: 1.85rem;
+  font-size: clamp(1.4rem, 4.5vw, 1.85rem);
   font-weight: 600;
   color: #ffffff;
   margin-bottom: 12px;
-  letter-spacing: -0.5px;
+  letter-spacing: -0.3px;
+  line-height: 1.25;
+  text-shadow: 0 2px 14px rgba(255, 77, 109, 0.45);
 }
 
 /* --- Hero Photo Frame & Animations --- */
@@ -1199,7 +1322,8 @@ html, body {
   }
 
   .greeting-title {
-    font-size: 1.65rem;
+    font-size: 1.45rem;
+    line-height: 1.25;
     margin-bottom: 8px;
   }
 

@@ -2,8 +2,8 @@
  * Romantic Fractal Tree Animation Web App
  * Step-by-step growing fractal tree with glowing fairy blossoms,
  * authentic turtle cursor, dynamic romantic aurora, shooting stars,
- * continuous rising hearts, stardust cursor trail, photo gallery slideshow,
- * and heartfelt custom messages for Sangu.
+ * continuous rising hearts, curved "Sangitaa Jii 💖✨" letter-by-letter reveal,
+ * photo gallery slideshow, and custom romantic messages for Sangu.
  */
 
 (function() {
@@ -38,6 +38,13 @@
   // Background floating hearts containers
   const homeHeartsContainer = document.getElementById('home-floating-hearts');
   const ambientHeartsContainer = document.getElementById('ambient-floating-hearts');
+
+  // Curved Name Elements ("Sangitaa Jii 💖✨") in Tree Background
+  const curvedNameContainer = document.getElementById('tree-curved-name');
+  const curvedLettersWrap = document.getElementById('curved-letters-wrap');
+  const curvedNameAura = document.getElementById('curved-name-aura');
+  const curvedNameText = "Sangitaa Jii 💖✨";
+  let curvedCharElements = [];
 
   // --- Sangu Photo Memories Gallery Data ---
   const sanguPhotos = [
@@ -400,7 +407,11 @@
   }
 
   function updateUIFromConfig() {
-    introName.textContent = userConfig.name ? `For ${userConfig.name} 💖` : 'For You 💖';
+    if (userConfig.name && userConfig.name !== 'Sangu' && userConfig.name !== 'Dear Pyari Sanguuu..') {
+      introName.innerHTML = `For ${userConfig.name} <span class="heart-emoji">💖✨</span>`;
+    } else {
+      introName.innerHTML = `For Dear Pyari Sanguuu.. <span class="heart-emoji">💖✨</span>`;
+    }
     
     const msg = userConfig.message;
     if (msg.includes('Always Stay Happy with me')) {
@@ -414,6 +425,130 @@
     }
 
     personalizedNoteEl.textContent = userConfig.note || '';
+  }
+
+  // --- Responsive Curved Name Layout ("Sangitaa Jii 💖✨") ---
+  function layoutCurvedName() {
+    if (!curvedLettersWrap) return;
+    curvedLettersWrap.innerHTML = '';
+    curvedCharElements = [];
+
+    const chars = Array.from(curvedNameText);
+    const totalChars = chars.length;
+
+    const baseScale = Math.min(viewWidth / 480, viewHeight / 780);
+    const trunkLen = Math.max(75, Math.min(130, 105 * baseScale));
+    const rootX = viewWidth * 0.5;
+    const rootY = Math.min(viewHeight * 0.74, viewHeight - 175);
+    const trunkEndY = rootY - trunkLen;
+
+    // Radius and center of the arch embracing the canopy
+    const archRadius = Math.max(180, Math.min(320, 225 * baseScale));
+    const archCenterX = rootX;
+    const archCenterY = (rootY - trunkLen * 3.1) + archRadius * 0.85;
+
+    if (curvedNameAura) {
+      curvedNameAura.style.left = `${archCenterX}px`;
+      curvedNameAura.style.top = `${archCenterY - archRadius * 0.85}px`;
+      curvedNameAura.style.width = `${archRadius * 2.2}px`;
+      curvedNameAura.style.height = `${archRadius * 1.3}px`;
+    }
+
+    // Angle range: -148 deg (left) to -32 deg (right), apex at -90 deg
+    const startAngle = -148;
+    const endAngle = -32;
+    const angleStep = (endAngle - startAngle) / (totalChars - 1);
+
+    chars.forEach((ch, idx) => {
+      const slot = document.createElement('div');
+      slot.className = 'tree-curved-slot';
+
+      const span = document.createElement('span');
+      span.className = 'tree-curved-char';
+      span.textContent = ch === ' ' ? '\u00A0' : ch;
+
+      if (ch === '💖' || ch === '✨' || ch === '🌸') {
+        span.classList.add('emoji-char');
+      }
+
+      const angleDeg = startAngle + idx * angleStep;
+      const angleRad = angleDeg * (Math.PI / 180);
+
+      const x = archCenterX + Math.cos(angleRad) * archRadius;
+      const y = archCenterY + Math.sin(angleRad) * archRadius;
+      const rotDeg = angleDeg + 90;
+
+      slot.style.left = `${x}px`;
+      slot.style.top = `${y}px`;
+      slot.style.transform = `translate(-50%, -50%) rotate(${rotDeg}deg)`;
+
+      slot.appendChild(span);
+      curvedLettersWrap.appendChild(slot);
+
+      curvedCharElements.push({
+        element: span,
+        slot: slot,
+        revealed: false,
+        rot: rotDeg,
+        x: x,
+        y: y
+      });
+    });
+  }
+
+  function resetCurvedName() {
+    if (curvedNameContainer) {
+      curvedNameContainer.classList.remove('tree-completed');
+    }
+    curvedCharElements.forEach(item => {
+      item.revealed = false;
+      item.element.classList.remove('revealed', 'pop');
+      item.element.style.transform = 'scale(0.3)';
+    });
+  }
+
+  function updateCurvedNameProgress(progress) {
+    if (!curvedCharElements.length) return;
+    const total = curvedCharElements.length;
+
+    curvedCharElements.forEach((item, idx) => {
+      // Progressively reveal as tree grows (from 6% to 92%)
+      const threshold = 0.06 + (idx / total) * 0.86;
+      if (progress >= threshold && !item.revealed) {
+        item.revealed = true;
+        item.element.classList.add('revealed', 'pop');
+        item.element.style.transform = 'scale(1)';
+
+        setTimeout(() => {
+          item.element.classList.remove('pop');
+        }, 600);
+
+        // Spawn occasional romantic sparkle on letter reveal
+        if (Math.random() > 0.4) {
+          createFloatingHeart(item.x, item.y, item.element.textContent.trim() === '💖' ? '💖' : '✨');
+        }
+      }
+    });
+  }
+
+  function highlightCurvedNameComplete() {
+    if (curvedNameContainer) {
+      curvedNameContainer.classList.add('tree-completed');
+    }
+
+    curvedCharElements.forEach((item, idx) => {
+      item.revealed = true;
+      item.element.classList.add('revealed');
+      item.element.style.transform = 'scale(1.15)';
+
+      setTimeout(() => {
+        createFloatingHeart(
+          item.x + (Math.random() - 0.5) * 20,
+          item.y + (Math.random() - 0.5) * 20,
+          idx % 2 === 0 ? '✨' : '💖'
+        );
+      }, idx * 70);
+    });
   }
 
   // --- Responsive Resizing ---
@@ -446,10 +581,16 @@
     staticCtx.scale(dpr, dpr);
 
     initBackgroundParticles();
+    layoutCurvedName();
 
-    if (tempCanvas && isTreeFinished) {
-      staticCtx.drawImage(tempCanvas, 0, 0, tempCanvas.width / dpr, tempCanvas.height / dpr, 0, 0, viewWidth, viewHeight);
-      renderCompletedTreeStatic();
+    if (isTreeFinished) {
+      highlightCurvedNameComplete();
+      if (tempCanvas) {
+        staticCtx.drawImage(tempCanvas, 0, 0, tempCanvas.width / dpr, tempCanvas.height / dpr, 0, 0, viewWidth, viewHeight);
+        renderCompletedTreeStatic();
+      }
+    } else if (animationQueue.length > 0) {
+      updateCurvedNameProgress(currentActionIndex / animationQueue.length);
     }
   }
 
@@ -871,6 +1012,8 @@
     currentActionIndex = 0;
     currentSegmentProgress = 0;
 
+    resetCurvedName();
+
     staticCtx.clearRect(0, 0, viewWidth, viewHeight);
     treeCtx.clearRect(0, 0, viewWidth, viewHeight);
 
@@ -973,6 +1116,12 @@
       }
     }
 
+    // Update curved name letter reveal based on tree animation progress
+    if (animationQueue.length > 0) {
+      const progress = currentActionIndex / animationQueue.length;
+      updateCurvedNameProgress(progress);
+    }
+
     treeCtx.clearRect(0, 0, viewWidth, viewHeight);
     treeCtx.drawImage(staticCanvas, 0, 0, viewWidth, viewHeight);
 
@@ -992,6 +1141,9 @@
 
   function onTreeFinished() {
     renderCompletedTreeStatic();
+
+    // Trigger grand highlight on curved "Sangitaa Jii 💖✨"
+    highlightCurvedNameComplete();
 
     toastText.innerHTML = `
       <div class="toast-lines">
@@ -1232,6 +1384,26 @@
     expCtx.scale(2, 2);
 
     expCtx.drawImage(bgCanvas, 0, 0, viewWidth, viewHeight);
+
+    // Draw curved "Sangitaa Jii 💖✨" on the exported wallpaper
+    if (curvedCharElements.length > 0) {
+      expCtx.save();
+      expCtx.font = 'bold 30px "Playfair Display", Georgia, serif';
+      expCtx.fillStyle = '#ffbe0b';
+      expCtx.shadowColor = 'rgba(255, 120, 50, 0.95)';
+      expCtx.shadowBlur = 18;
+      expCtx.textAlign = 'center';
+      expCtx.textBaseline = 'middle';
+      curvedCharElements.forEach(item => {
+        expCtx.save();
+        expCtx.translate(item.x, item.y);
+        expCtx.rotate(item.rot * (Math.PI / 180));
+        expCtx.fillText(item.element.textContent, 0, 0);
+        expCtx.restore();
+      });
+      expCtx.restore();
+    }
+
     expCtx.drawImage(staticCanvas, 0, 0, viewWidth, viewHeight);
 
     expCtx.save();
@@ -1258,7 +1430,7 @@
     expCtx.restore();
 
     const link = document.createElement('a');
-    link.download = `Tree_Of_Love_${userConfig.name || 'Sangu'}.png`;
+    link.download = `Tree_Of_Love_Sangitaa.png`;
     link.href = exportCanvas.toDataURL('image/png');
     link.click();
 
@@ -1294,6 +1466,7 @@
     parseQueryParams();
     resizeCanvases();
     renderBackground();
+    layoutCurvedName();
     startHeroSlideshow();
     initContinuousHearts();
     updateGalleryView(0);
