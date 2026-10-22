@@ -39,6 +39,75 @@ html, body {
 }
 
 /* ==========================================================================
+   Romantic Ambient Aurora Glow Orbs (Dynamic Shifting Background)
+   ========================================================================== */
+
+.ambient-aurora {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.aurora-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(85px);
+  opacity: 0.45;
+  mix-blend-mode: screen;
+  will-change: transform, opacity;
+}
+
+.aurora-orb.orb-1 {
+  width: 480px;
+  height: 480px;
+  background: radial-gradient(circle, #e63946 0%, rgba(230, 57, 70, 0.35) 60%, transparent 80%);
+  top: 5%;
+  left: 10%;
+  animation: floatAurora1 18s ease-in-out infinite alternate;
+}
+
+.aurora-orb.orb-2 {
+  width: 540px;
+  height: 540px;
+  background: radial-gradient(circle, #ff9e1b 0%, rgba(255, 180, 50, 0.3) 60%, transparent 80%);
+  bottom: 8%;
+  right: 8%;
+  animation: floatAurora2 22s ease-in-out infinite alternate;
+}
+
+.aurora-orb.orb-3 {
+  width: 460px;
+  height: 460px;
+  background: radial-gradient(circle, #7209b7 0%, rgba(181, 23, 158, 0.35) 60%, transparent 80%);
+  top: 40%;
+  left: 55%;
+  animation: floatAurora3 20s ease-in-out infinite alternate;
+}
+
+@keyframes floatAurora1 {
+  0% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(80px, 60px) scale(1.18); }
+  100% { transform: translate(-50px, 90px) scale(0.95); }
+}
+
+@keyframes floatAurora2 {
+  0% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-90px, -70px) scale(1.22); }
+  100% { transform: translate(60px, -40px) scale(0.92); }
+}
+
+@keyframes floatAurora3 {
+  0% { transform: translate(0, 0) scale(0.92); }
+  50% { transform: translate(-70px, 80px) scale(1.15); }
+  100% { transform: translate(80px, -60px) scale(1.05); }
+}
+
+/* ==========================================================================
    Canvases
    ========================================================================== */
 
@@ -63,7 +132,55 @@ html, body {
 }
 
 /* ==========================================================================
-   Interactive Floating Hearts Layer
+   Continuous Romantic Floating Hearts & Petals Layer
+   ========================================================================== */
+
+.ambient-floating-hearts,
+.home-floating-hearts {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 2;
+}
+
+.home-floating-hearts {
+  position: absolute;
+  z-index: 1;
+}
+
+.rising-heart {
+  position: absolute;
+  bottom: -45px;
+  pointer-events: none;
+  user-select: none;
+  will-change: transform, opacity;
+  animation: riseUpward linear forwards;
+  filter: drop-shadow(0 0 10px rgba(255, 120, 160, 0.55));
+}
+
+@keyframes riseUpward {
+  0% {
+    transform: translateY(0) translateX(0) rotate(0deg) scale(var(--scale, 1));
+    opacity: 0;
+  }
+  12% {
+    opacity: var(--max-opacity, 0.7);
+  }
+  85% {
+    opacity: var(--max-opacity, 0.7);
+  }
+  100% {
+    transform: translateY(calc(-100vh - 90px)) translateX(var(--drift-x, 40px)) rotate(var(--rot, 30deg)) scale(var(--scale, 1));
+    opacity: 0;
+  }
+}
+
+/* ==========================================================================
+   Interactive Click/Tap Floating Hearts Layer
    ========================================================================== */
 
 #heart-particles {
@@ -367,7 +484,7 @@ html, body {
 }
 
 /* ==========================================================================
-   Gift Envelope / Home Page Card (Featuring Hero Photo of Sangu)
+   Gift Envelope / Home Page Card (Featuring Hero Photo Slideshow of Sangu)
    ========================================================================== */
 
 .intro-overlay {
@@ -380,7 +497,7 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: opacity 0.7s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.7s;
+  transition: opacity 0.75s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.75s;
   padding: 16px;
   overflow-y: auto;
 }
@@ -397,10 +514,114 @@ html, body {
   left: 0;
   width: 100%;
   height: 100%;
-  background: radial-gradient(circle at center, rgba(22, 11, 34, 0.94) 0%, rgba(5, 3, 9, 0.98) 100%);
-  backdrop-filter: blur(10px);
+  background: radial-gradient(circle at center, rgba(18, 9, 28, 0.58) 0%, rgba(5, 2, 8, 0.8) 100%);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
 }
 
+/* Home Intro Moving Background Animations */
+.intro-bg-animations {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.home-aurora-glow {
+  position: absolute;
+  top: -25%;
+  left: -25%;
+  width: 150%;
+  height: 150%;
+  background: radial-gradient(ellipse at 25% 25%, rgba(230, 57, 70, 0.25) 0%, transparent 55%),
+              radial-gradient(ellipse at 80% 75%, rgba(255, 158, 27, 0.22) 0%, transparent 50%),
+              radial-gradient(ellipse at 75% 20%, rgba(114, 9, 183, 0.25) 0%, transparent 50%);
+  animation: auroraPulse 12s ease-in-out infinite alternate;
+  filter: blur(50px);
+}
+
+@keyframes auroraPulse {
+  0% { transform: scale(1) rotate(0deg); opacity: 0.75; }
+  50% { transform: scale(1.15) rotate(3deg); opacity: 1; }
+  100% { transform: scale(0.95) rotate(-3deg); opacity: 0.8; }
+}
+
+/* Romantic Shooting Stars */
+.shooting-star {
+  position: absolute;
+  height: 2px;
+  background: linear-gradient(90deg, rgba(255, 245, 210, 1), rgba(255, 150, 40, 0.7), transparent);
+  border-radius: 999px;
+  filter: drop-shadow(0 0 6px rgba(255, 200, 100, 0.9));
+  opacity: 0;
+  pointer-events: none;
+}
+
+.shooting-star::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: 0;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 0 10px #ffbe0b, 0 0 20px #ff9e00;
+}
+
+.shooting-star.s-star-1 {
+  top: 18%;
+  left: 12%;
+  width: 140px;
+  transform: rotate(-35deg);
+  animation: meteorSweep1 7s ease-in-out infinite;
+  animation-delay: 0.8s;
+}
+
+.shooting-star.s-star-2 {
+  top: 26%;
+  right: 16%;
+  width: 170px;
+  transform: rotate(-40deg);
+  animation: meteorSweep2 8.5s ease-in-out infinite;
+  animation-delay: 3.5s;
+}
+
+.shooting-star.s-star-3 {
+  top: 9%;
+  right: 36%;
+  width: 110px;
+  transform: rotate(-30deg);
+  animation: meteorSweep3 9.5s ease-in-out infinite;
+  animation-delay: 6s;
+}
+
+@keyframes meteorSweep1 {
+  0% { transform: rotate(-35deg) translateX(0); opacity: 0; }
+  8% { opacity: 1; }
+  22% { transform: rotate(-35deg) translateX(300px); opacity: 0; }
+  100% { transform: rotate(-35deg) translateX(300px); opacity: 0; }
+}
+
+@keyframes meteorSweep2 {
+  0% { transform: rotate(-40deg) translateX(0); opacity: 0; }
+  8% { opacity: 1; }
+  24% { transform: rotate(-40deg) translateX(320px); opacity: 0; }
+  100% { transform: rotate(-40deg) translateX(320px); opacity: 0; }
+}
+
+@keyframes meteorSweep3 {
+  0% { transform: rotate(-30deg) translateX(0); opacity: 0; }
+  8% { opacity: 1; }
+  20% { transform: rotate(-30deg) translateX(250px); opacity: 0; }
+  100% { transform: rotate(-30deg) translateX(250px); opacity: 0; }
+}
+
+/* Envelope Card with Breathing Glow */
 .envelope-card {
   position: relative;
   z-index: 2;
@@ -416,6 +637,18 @@ html, body {
   transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
   overflow: hidden;
   margin: auto;
+  animation: envelopePulse 4s ease-in-out infinite alternate;
+}
+
+@keyframes envelopePulse {
+  0% {
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.85), 0 0 35px rgba(255, 120, 30, 0.25);
+    border-color: rgba(255, 180, 70, 0.35);
+  }
+  100% {
+    box-shadow: 0 28px 70px rgba(0, 0, 0, 0.9), 0 0 55px rgba(230, 57, 70, 0.42), 0 0 25px rgba(255, 195, 80, 0.3);
+    border-color: rgba(255, 205, 95, 0.6);
+  }
 }
 
 .envelope-top-flare {
@@ -455,6 +688,7 @@ html, body {
   justify-content: center;
   align-items: center;
   animation: photoFloat 5s ease-in-out infinite;
+  cursor: pointer;
 }
 
 @keyframes photoFloat {

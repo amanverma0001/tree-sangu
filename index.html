@@ -21,18 +21,38 @@
 </head>
 <body>
 
-  <!-- Ambient Background Canvas (Stars, Nebula, Fireflies) -->
+  <!-- Romantic Ambient Aurora Glow Orbs (Dynamic Background) -->
+  <div class="ambient-aurora" aria-hidden="true">
+    <div class="aurora-orb orb-1"></div>
+    <div class="aurora-orb orb-2"></div>
+    <div class="aurora-orb orb-3"></div>
+  </div>
+
+  <!-- Ambient Background Canvas (Stars, Nebula, Fireflies, Meteors) -->
   <canvas id="bg-canvas"></canvas>
 
   <!-- Main Fractal Tree Canvas -->
   <canvas id="tree-canvas"></canvas>
 
-  <!-- Interactive Floating Hearts Container -->
+  <!-- Continuous Romantic Floating Hearts & Petals (Behind & around tree) -->
+  <div id="ambient-floating-hearts" class="ambient-floating-hearts" aria-hidden="true"></div>
+
+  <!-- Interactive Click/Tap Floating Hearts Container -->
   <div id="heart-particles" aria-hidden="true"></div>
 
   <!-- Romantic Gift Envelope / Home Page Card (Appears on first load) -->
   <div id="intro-overlay" class="intro-overlay">
     <div class="intro-backdrop"></div>
+
+    <!-- Moving Romantic Home Background Animations -->
+    <div class="intro-bg-animations" aria-hidden="true">
+      <div class="home-aurora-glow"></div>
+      <div class="shooting-star s-star-1"></div>
+      <div class="shooting-star s-star-2"></div>
+      <div class="shooting-star s-star-3"></div>
+      <div id="home-floating-hearts" class="home-floating-hearts"></div>
+    </div>
+
     <div class="envelope-card" id="envelope-card">
       <div class="envelope-top-flare"></div>
 

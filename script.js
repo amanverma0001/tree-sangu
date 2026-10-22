@@ -1,8 +1,9 @@
 /**
  * Romantic Fractal Tree Animation Web App
  * Step-by-step growing fractal tree with glowing fairy blossoms,
- * authentic turtle cursor, ambient stardust, Web Audio music box,
- * photo memories gallery with interactive slideshow, and custom romantic messages.
+ * authentic turtle cursor, dynamic romantic aurora, shooting stars,
+ * continuous rising hearts, stardust cursor trail, photo gallery slideshow,
+ * and heartfelt custom messages for Sangu.
  */
 
 (function() {
@@ -33,6 +34,10 @@
   const speedBtns = document.querySelectorAll('.speed-btn');
   const celebrationToast = document.getElementById('celebration-toast');
   const toastText = document.getElementById('toast-text');
+
+  // Background floating hearts containers
+  const homeHeartsContainer = document.getElementById('home-floating-hearts');
+  const ambientHeartsContainer = document.getElementById('ambient-floating-hearts');
 
   // --- Sangu Photo Memories Gallery Data ---
   const sanguPhotos = [
@@ -257,6 +262,90 @@
     });
   }
 
+  // --- Continuous Romantic Rising Hearts Engine ---
+  const romanticEmojis = ['💖', '💕', '✨', '🌸', '🧡', '🌷', '🥰', '💫', '🤍'];
+
+  function spawnRisingHeart(container, isInitial = false) {
+    if (!container) return;
+    const el = document.createElement('div');
+    el.className = 'rising-heart';
+    el.textContent = romanticEmojis[Math.floor(Math.random() * romanticEmojis.length)];
+
+    const size = Math.floor(Math.random() * 16) + 14;
+    const startX = Math.random() * 96 + 2;
+    const driftX = (Math.random() - 0.5) * 80;
+    const rot = (Math.random() - 0.5) * 60;
+    const duration = Math.random() * 5 + 7;
+    const maxOpacity = Math.random() * 0.45 + 0.35;
+    const scale = Math.random() * 0.4 + 0.8;
+
+    el.style.left = `${startX}%`;
+    el.style.fontSize = `${size}px`;
+    el.style.setProperty('--drift-x', `${driftX}px`);
+    el.style.setProperty('--rot', `${rot}deg`);
+    el.style.setProperty('--max-opacity', maxOpacity);
+    el.style.setProperty('--scale', scale);
+    el.style.animationDuration = `${duration}s`;
+
+    if (isInitial) {
+      const progress = Math.random() * 0.85;
+      el.style.animationDelay = `-${progress * duration}s`;
+    }
+
+    container.appendChild(el);
+
+    setTimeout(() => {
+      el.remove();
+    }, duration * 1000);
+  }
+
+  function initContinuousHearts() {
+    if (homeHeartsContainer) {
+      for (let i = 0; i < 18; i++) {
+        spawnRisingHeart(homeHeartsContainer, true);
+      }
+      setInterval(() => {
+        if (!introOverlay.classList.contains('hidden')) {
+          spawnRisingHeart(homeHeartsContainer);
+        }
+      }, 550);
+    }
+
+    if (ambientHeartsContainer) {
+      for (let i = 0; i < 14; i++) {
+        spawnRisingHeart(ambientHeartsContainer, true);
+      }
+      setInterval(() => {
+        spawnRisingHeart(ambientHeartsContainer);
+      }, 850);
+    }
+  }
+
+  // --- Interactive Sparkle & Heart Trail on Home Screen ---
+  let lastSparkleTime = 0;
+  if (introOverlay) {
+    introOverlay.addEventListener('mousemove', (e) => {
+      if (e.target.closest('.envelope-card')) return;
+      const now = Date.now();
+      if (now - lastSparkleTime > 110) {
+        lastSparkleTime = now;
+        createFloatingHeart(e.clientX, e.clientY, Math.random() > 0.5 ? '✨' : '💖');
+      }
+    });
+
+    introOverlay.addEventListener('touchmove', (e) => {
+      if (e.touches && e.touches[0]) {
+        const t = e.touches[0];
+        if (t.target && t.target.closest('.envelope-card')) return;
+        const now = Date.now();
+        if (now - lastSparkleTime > 140) {
+          lastSparkleTime = now;
+          createFloatingHeart(t.clientX, t.clientY, '✨');
+        }
+      }
+    }, { passive: true });
+  }
+
   // --- Configuration & State ---
   let speedMultiplier = 1.0;
   let animationRunning = false;
@@ -291,8 +380,9 @@
   // Ambient particles
   const bgStars = [];
   const fireflies = [];
-  const MAX_STARS = 60;
-  const MAX_FIREFLIES = 35;
+  const meteors = [];
+  const MAX_STARS = 75;
+  const MAX_FIREFLIES = 40;
 
   // --- URL Query Params Parser ---
   function parseQueryParams() {
@@ -375,8 +465,8 @@
       bgStars.push({
         x: Math.random() * viewWidth,
         y: Math.random() * viewHeight,
-        radius: Math.random() * 1.4 + 0.6,
-        alpha: Math.random() * 0.7 + 0.2,
+        radius: Math.random() * 1.5 + 0.6,
+        alpha: Math.random() * 0.75 + 0.25,
         twinkleSpeed: Math.random() * 0.02 + 0.008,
         twinklePhase: Math.random() * Math.PI * 2
       });
@@ -386,8 +476,8 @@
     for (let i = 0; i < MAX_FIREFLIES; i++) {
       fireflies.push({
         x: Math.random() * viewWidth,
-        y: Math.random() * (viewHeight * 0.75) + 50,
-        radius: Math.random() * 2.2 + 1.2,
+        y: Math.random() * (viewHeight * 0.8) + 40,
+        radius: Math.random() * 2.4 + 1.2,
         vx: (Math.random() - 0.5) * 0.45,
         vy: (Math.random() - 0.5) * 0.45,
         hue: Math.random() > 0.4 ? 42 : 18,
@@ -398,14 +488,31 @@
     }
   }
 
+  function maybeSpawnMeteor() {
+    if (Math.random() < 0.012 && meteors.length < 3) {
+      meteors.push({
+        x: Math.random() * viewWidth * 0.85,
+        y: Math.random() * (viewHeight * 0.35),
+        len: Math.random() * 90 + 60,
+        speed: Math.random() * 5 + 7,
+        alpha: 1,
+        angle: (Math.PI / 4) + (Math.random() - 0.5) * 0.2
+      });
+    }
+  }
+
   function renderBackground() {
     bgCtx.clearRect(0, 0, viewWidth, viewHeight);
 
+    const now = Date.now() * 0.001;
+    const cx = viewWidth * (0.5 + Math.sin(now * 0.3) * 0.06);
+    const cy = viewHeight * (0.4 + Math.cos(now * 0.25) * 0.05);
+
     const grad = bgCtx.createRadialGradient(
-      viewWidth * 0.5, viewHeight * 0.4, 40,
-      viewWidth * 0.5, viewHeight * 0.4, Math.max(viewWidth, viewHeight) * 0.8
+      cx, cy, 40,
+      cx, cy, Math.max(viewWidth, viewHeight) * 0.85
     );
-    grad.addColorStop(0, '#100a1c');
+    grad.addColorStop(0, '#120b20');
     grad.addColorStop(0.5, '#090511');
     grad.addColorStop(1, '#030206');
     bgCtx.fillStyle = grad;
@@ -413,15 +520,15 @@
 
     const canopyGlow = bgCtx.createRadialGradient(
       viewWidth * 0.5, viewHeight * 0.35, 10,
-      viewWidth * 0.5, viewHeight * 0.35, Math.min(viewWidth, viewHeight) * 0.45
+      viewWidth * 0.5, viewHeight * 0.35, Math.min(viewWidth, viewHeight) * 0.48
     );
-    canopyGlow.addColorStop(0, 'rgba(255, 150, 40, 0.09)');
-    canopyGlow.addColorStop(0.6, 'rgba(230, 50, 70, 0.04)');
+    canopyGlow.addColorStop(0, 'rgba(255, 150, 40, 0.11)');
+    canopyGlow.addColorStop(0.6, 'rgba(230, 50, 70, 0.05)');
     canopyGlow.addColorStop(1, 'transparent');
     bgCtx.fillStyle = canopyGlow;
     bgCtx.fillRect(0, 0, viewWidth, viewHeight);
 
-    const now = Date.now() * 0.001;
+    // Stars
     bgStars.forEach(star => {
       const a = star.alpha + Math.sin(now * 2 + star.twinklePhase) * 0.25;
       bgCtx.fillStyle = `rgba(255, 245, 230, ${Math.max(0.1, Math.min(1, a))})`;
@@ -430,17 +537,18 @@
       bgCtx.fill();
     });
 
+    // Fireflies
     fireflies.forEach(f => {
       f.x += f.vx;
       f.y += f.vy;
       if (f.x < 10) f.x = viewWidth - 10;
       if (f.x > viewWidth - 10) f.x = 10;
-      if (f.y < 30) f.y = viewHeight * 0.75;
-      if (f.y > viewHeight * 0.8) f.y = 40;
+      if (f.y < 30) f.y = viewHeight * 0.78;
+      if (f.y > viewHeight * 0.82) f.y = 40;
 
       const a = 0.4 + Math.sin(now * 3 + f.pulsePhase) * 0.35;
       bgCtx.save();
-      bgCtx.shadowBlur = 10;
+      bgCtx.shadowBlur = 12;
       bgCtx.shadowColor = `hsl(${f.hue}, 100%, 60%)`;
       bgCtx.fillStyle = `hsla(${f.hue}, 100%, 75%, ${Math.max(0.1, a)})`;
       bgCtx.beginPath();
@@ -448,6 +556,38 @@
       bgCtx.fill();
       bgCtx.restore();
     });
+
+    // Shooting Stars (Canvas Meteors)
+    maybeSpawnMeteor();
+    for (let i = meteors.length - 1; i >= 0; i--) {
+      const m = meteors[i];
+      m.x += Math.cos(m.angle) * m.speed;
+      m.y += Math.sin(m.angle) * m.speed;
+      m.alpha -= 0.022;
+
+      if (m.alpha <= 0) {
+        meteors.splice(i, 1);
+        continue;
+      }
+
+      const tailX = m.x - Math.cos(m.angle) * m.len;
+      const tailY = m.y - Math.sin(m.angle) * m.len;
+
+      const mGrad = bgCtx.createLinearGradient(tailX, tailY, m.x, m.y);
+      mGrad.addColorStop(0, 'rgba(255, 180, 50, 0)');
+      mGrad.addColorStop(1, `rgba(255, 245, 220, ${m.alpha})`);
+
+      bgCtx.save();
+      bgCtx.strokeStyle = mGrad;
+      bgCtx.lineWidth = 1.8;
+      bgCtx.shadowBlur = 8;
+      bgCtx.shadowColor = '#ffbe0b';
+      bgCtx.beginPath();
+      bgCtx.moveTo(tailX, tailY);
+      bgCtx.lineTo(m.x, m.y);
+      bgCtx.stroke();
+      bgCtx.restore();
+    }
 
     requestAnimationFrame(renderBackground);
   }
@@ -1155,6 +1295,7 @@
     resizeCanvases();
     renderBackground();
     startHeroSlideshow();
+    initContinuousHearts();
     updateGalleryView(0);
 
     const params = new URLSearchParams(window.location.search);
